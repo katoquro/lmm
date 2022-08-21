@@ -1,0 +1,83 @@
+= lmm - Local machine manager
+
+Simple Ansible wrapper to install Roles as packages and share them
+
+== Why do you need this
+
+This is a small script which allows you to install packages from Roles (a.k.a recepies).
+
+NOTE: Not it's focused and tested on Ubuntu
+
+Many packages of Ubuntu Linux have outdated versions or requires 3rd party repositories (like Google Chrome or 1Password).
+Some of them don't even have DEB-repo and should be installed in steps (Like Go-lang or NVM).
+With `lmm` you avoid bash/python/etc scripts for autonomization,
+and you can use power of https://www.ansible.com/[Ansible] to describe steps to install packages.
+
+.How to install 1Password with `lmm`
+----
+# Where prefix 'kato' stands for role owner
+lmm install kato.1password
+----
+
+And you can see all steps which are required to install 1Password
+
+../roles/kato.1password
+[soirce,yml]
+----
+---
+- name: add repo key
+  become: true
+  apt_key:
+    keyring: /usr/share/keyrings/1password-archive-keyring.gpg
+    keyserver: keyserver.ubuntu.com
+    id: 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
+
+- name: add repo
+  become: true
+  apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main
+
+- name: install
+  become: true
+  apt:
+    pkg:
+    - 1password
+----
+
+And you can see all steps which require `sudo`: they are `become: true` (means become superuser)
+
+NOTE: By default, ansible cannot become su by themselves (must be installed w/o sudo).
+      So you have to 'activate su session' in the current terminal with command `sudo true` before you call `lmm install`
+
+
+== How to install
+
+. As `lmm` is based on Ansible we recommend install it from `pip` to have the newest version.
++
+[source,bash]
+----
+sudo apt-get install build-essential software-properties-common git python3-pip
+# install ansible w/o sudo
+pip3 install ansible
+----
+
+. clone this repo to any location
++
+----
+git clone git@github.com:katoquro/lmm.git
+----
+
+. Init and check that everything is OK
++
+----
+./lmm.sh help
+----
+
+. Optional - Create a Symlink
++
+You can create a Symbolic Link for script to use it system-wide.
+Call it from cloned repo (you can choose any target in PATH)
++
+----
+ln -s "$(pwd)/lmm.sh" ~/.local/bin/lmm
+----

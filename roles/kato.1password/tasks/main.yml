@@ -1,0 +1,18 @@
+---
+- name: add repo key
+  become: true
+  apt_key:
+    keyring: /usr/share/keyrings/1password-archive-keyring.gpg
+    keyserver: keyserver.ubuntu.com
+    id: 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
+
+- name: add repo
+  become: true
+  apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main
+
+- name: install
+  become: true
+  apt:
+    pkg:
+      - 1password
