@@ -1,0 +1,22 @@
+---
+- name: Download and Install golang
+  become: true
+  unarchive:
+    # https://golang.org/dl/
+    src: "https://go.dev/dl/go{{ _version }}.linux-amd64.tar.gz"
+    dest: /usr/local
+    remote_src: yes
+
+- name: Create go symlink
+  become: true
+  file:
+    src: /usr/local/go/bin/go
+    dest: /usr/local/bin/go
+    state: link
+
+- name: Create gofmt symlink
+  become: true
+  file:
+    src: /usr/local/go/bin/gofmt
+    dest: /usr/local/bin/gofmt
+    state: link
