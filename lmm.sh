@@ -81,6 +81,7 @@ install() {
   cat >${INSTALL_ROLE_FILE} <<EOF
 ---
 - hosts: localhost
+  connection: local
 
   vars:
     _user: "{{ ansible_env.USER }}"
@@ -100,7 +101,18 @@ EOF
     tail -n 20 "${LOG_FILE}"
     log_error "Error occurred. Last 20 lines from log above. ${APP_PATH}/${LOG_FILE}"
     log_info "If ROLE requires sudo. You have to run 'sudo true' before calling 'lmm install'"
+    exit 1
   fi
+}
+
+test() {
+  if ! which docker >/dev/null 2>&1; then
+    log_warn "Tests requires installed docker"
+    log_warn "Use: lmm install kato.docker"
+  fi
+
+  docker build -t testing-lmm -f ./test/Dockerfile .
+  docker run -ti --rm testing-lmm
 }
 
 #
@@ -137,6 +149,10 @@ i | install) # \033[0;35mROLE_NAME\033[0m - install ansible role from ./roles
   else
     install "$2"
   fi
+  ;;
+
+test) # - install all roles in a docker container
+  test
   ;;
 
 *)
