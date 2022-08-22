@@ -12,7 +12,7 @@ ENV PATH="${PATH}:/home/lmm-test/.local/bin"
 
 RUN install -g lmm-test -o lmm-test -d /opt/lmm
 
-COPY ./test/test-all.sh ./lmm.sh /opt/lmm/
+COPY ./test/test.sh ./lmm.sh /opt/lmm/
 COPY ./roles /opt/lmm/roles
 
 USER lmm-test
@@ -21,4 +21,4 @@ WORKDIR /opt/lmm
 
 RUN ./lmm.sh version
 
-CMD ./test-all.sh
+CMD ./test.sh

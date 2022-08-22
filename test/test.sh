@@ -8,6 +8,12 @@ set -e
 ./lmm.sh search
 
 sudo true
+
+if [ -n "${TEST_ROLE}" ]; then
+  ./lmm.sh install ${TEST_ROLE}
+  exit 0
+fi
+
 for d in ./roles/*; do
   ROLE="${d/'./roles/'/}"
 

@@ -59,10 +59,9 @@ init_ansible() {
   rm -rf "${CACHE_DIR:?}"/* "collections"
 
   #https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file
+  #current roles don't require extra roles or collections
   cat >/tmp/ansible_requirements.yml <<EOF
 ---
-collections:
-- community.general
 EOF
 
   # shellcheck disable=SC2094
@@ -112,7 +111,7 @@ test() {
   fi
 
   docker build -t testing-lmm -f ./test/Dockerfile .
-  docker run -ti --rm testing-lmm
+  docker run -e "TEST_ROLE=$1" --rm testing-lmm
 }
 
 #
@@ -151,8 +150,8 @@ i | install) # \033[0;35mROLE_NAME\033[0m - install ansible role from ./roles
   fi
   ;;
 
-test) # - install all roles in a docker container
-  test
+test) # \033[0;35m[ROLE_NAME]\033[0m - install given role in a docker container, otherwise installs all roles
+  test "$2"
   ;;
 
 *)
