@@ -58,7 +58,7 @@ NOTE: By default, ansible cannot become su by themselves (must be installed w/o 
 +
 [source,bash]
 ----
-sudo apt-get install build-essential software-properties-common git python3-pip
+sudo apt-get install git python3-pip
 # install ansible w/o sudo
 pip3 install ansible
 ----
@@ -96,7 +96,7 @@ Roles have convenient variables:
 
 - `{{ _user }}` - current username.
 May be used to give rights or find home folder.
-- `{{ ansible_distribution_release }}` - ubuntu release like bionic,focal, jammy, etc.
+- `{{ ansible_distribution_release }}` - ubuntu release like bionic, focal, jammy, etc.
 May be used in repo path.
 
 == Q&A
