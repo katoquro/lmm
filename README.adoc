@@ -6,7 +6,7 @@ Simple Ansible wrapper to install Roles as packages and share them
 
 This is a small script which allows you to install packages from Roles (a.k.a recepies).
 
-NOTE: Not it's focused and tested on Ubuntu
+NOTE: Currently, it's focused and tested on Ubuntu
 
 Many packages of Ubuntu Linux have outdated versions or requires 3rd party repositories (like Google Chrome or 1Password).
 Some of them don't even have DEB-repo and should be installed in steps (Like Go-lang or NVM).
@@ -81,3 +81,17 @@ Call it from cloned repo (you can choose any target in PATH)
 ----
 ln -s "$(pwd)/lmm.sh" ~/.local/bin/lmm
 ----
+
+
+== Q&A
+
+[qanda]
+Why I don't see 'update/upgrade' command for package/role::
+Current roles are quite simple and doesn't include such cases.
+However, many roles configure DEB-repos, so you will get updates via `apt`.
+Some packages are provided as `latest` so you may update them by calling `install` again.
+
+Why I don't see 'delete' command for package/role::
+The current aim of `lmm` to provide easy installation of packages.
+`lmm` isn't full-fledged package manager.
+Think about it as declarative replacement of installation scripts.
