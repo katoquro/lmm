@@ -1,0 +1,6 @@
+---
+- name: download and install
+  become: true
+  apt:
+    deb: "https://downloads.mongodb.com/compass/mongodb-compass_{{ _version }}_amd64.deb"
+

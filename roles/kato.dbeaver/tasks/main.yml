@@ -1,0 +1,11 @@
+---
+- name: add repo
+  become: true
+  apt_repository:
+    repo: ppa:serge-rider/dbeaver-ce
+
+- name: install DBeaver CE
+  become: true
+  apt:
+    pkg:
+      - dbeaver-ce
