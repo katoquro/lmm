@@ -85,8 +85,6 @@ check_sudo_session() {
   else
     log_info "Sudo session is disabled"
   fi
-
-  exit
 }
 
 install() {
@@ -156,6 +154,10 @@ help) # - this help
 
 version) # - print current version
   log_info "${MAJOR_VERSION}.${MINOR_VERSION}"
+  ;;
+
+u | update) # - shortcut for git pull 😀
+  git pull
   ;;
 
 l | list) # - list all available roles

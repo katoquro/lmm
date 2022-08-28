@@ -118,10 +118,10 @@ E.g. install `nvm` with `node` when you are going to install `yarn`.
 == Q&A
 
 [qanda]
-Why I don't see 'update/upgrade' command for package/role::
+Why I don't see 'upgrade' command for package/role::
 Current roles are quite simple and don't include such cases.
-However, many roles configure DEB-repos, so you will get updates via `apt`.
-Some packages are provided as `latest` so you may update them by calling `install` again.
+However, many roles configure DEB-repos, so you will get upgrades via `apt`.
+Some packages are provided as `latest` so you may upgrade them by calling `install` again.
 
 Why I don't see 'delete' command for package/role::
 The current aim of `lmm` to provide easy installation of packages.
