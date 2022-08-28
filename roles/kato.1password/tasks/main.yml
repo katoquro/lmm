@@ -2,7 +2,7 @@
 - name: add repo key
   become: true
   apt_key:
-    keyring: /usr/share/keyrings/1password-archive-keyring.gpg
+    keyring: /etc/apt/trusted.gpg.d/1password-archive-keyring.gpg
     keyserver: keyserver.ubuntu.com
     id: 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
 
