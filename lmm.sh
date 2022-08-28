@@ -74,6 +74,21 @@ EOF
   date >"${CACHE_DIR}/${MAJOR_VERSION}"
 }
 
+check_sudo_session() {
+  if [ "$EUID" = 0 ]; then
+    log_error "Don't run lmm as superuser. Please use sudo session. You can start it with 'sudo true' command"
+    exit 1
+  fi
+
+  if sudo -n true 2>/dev/null; then
+    log_info "Sudo session is ACTIVE"
+  else
+    log_info "Sudo session is disabled"
+  fi
+
+  exit
+}
+
 install() {
   role=${1:?}
 
@@ -130,6 +145,8 @@ test() {
 echo "  :: Start at $(date)" >>"${LOG_FILE}"
 
 init_ansible
+
+check_sudo_session
 
 case "$1" in
 

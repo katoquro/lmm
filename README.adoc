@@ -21,8 +21,6 @@ and you can use power of https://www.ansible.com/[Ansible] to describe steps to 
 lmm install kato.1password
 ----
 
-IMPORTANT: Never run `lmm` via sudo or as su! Use sudo session instead.
-
 And you can see all steps which are required to install 1Password
 
 ../roles/kato.1password
