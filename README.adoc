@@ -1,6 +1,7 @@
 = lmm - Local machine manager
+:toc:
 
-Simple Ansible wrapper to install Roles as packages and share them
+A simple Ansible wrapper to install Roles as packages and share them.
 
 == Why do you need this
 
@@ -8,9 +9,10 @@ This is a small script which allows you to install packages from Roles (a.k.a re
 
 NOTE: Currently, it's focused and tested on Ubuntu
 
-Many packages of Ubuntu Linux have outdated versions or requires 3rd party repositories (like Google Chrome or 1Password).
-Some of them don't even have DEB-repo and should be installed in steps (Like Go-lang or NVM).
-With `lmm` you avoid bash/python/etc scripts for autonomization,
+Many packages of Ubuntu Linux have outdated versions or require 3rd party repositories (like Google Chrome or 1Password).
+Some of them don't even have DEB-repo and should be installed by steps (Like Go-lang or NVM).
+
+With `lmm` you can almost avoid bash/python/etc scripts for automatization,
 and you can use power of https://www.ansible.com/[Ansible] to describe steps to install packages.
 
 .How to install 1Password with `lmm`
@@ -46,7 +48,7 @@ And you can see all steps which are required to install 1Password
     - 1password
 ----
 
-And you can see all steps which require `sudo`: they are `become: true` (means become superuser)
+And you can see all steps which require `sudo`: they are `become: true` (means become the superuser)
 
 NOTE: By default, ansible cannot become su by themselves (must be installed w/o sudo).
       So you have to 'activate su session' in the current terminal with command `sudo true` before you call `lmm install`
@@ -58,7 +60,7 @@ NOTE: By default, ansible cannot become su by themselves (must be installed w/o 
 +
 [source,bash]
 ----
-sudo apt-get install git python3-pip
+sudo apt-get install git curl python3-pip
 # install ansible w/o sudo
 pip3 install ansible
 ----
@@ -77,7 +79,7 @@ git clone git@github.com:katoquro/lmm.git
 
 . Optional - Create a Symlink
 +
-You can create a Symbolic Link for script to use it system-wide.
+You can create a Symbolic Link for the script to use it system-wide.
 Call it from cloned repo (you can choose any target in PATH)
 +
 ----
@@ -90,7 +92,7 @@ ln -s "$(pwd)/lmm.sh" ~/.local/bin/lmm
 The full doc you can find at https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html[Ansible site]
 
 The simplest way to start is to copy existing role.
-If the new packages require version extract it to separate role variable.
+If the new package requires version extract it to separate role variable.
 
 Roles have convenient variables:
 
@@ -99,11 +101,27 @@ May be used to give rights or find home folder.
 - `{{ ansible_distribution_release }}` - ubuntu release like bionic, focal, jammy, etc.
 May be used in repo path.
 
+=== Shell Variables
+
+Declarative Ansible way has limitations when you want to have variables evaluated in your shell.
+However, such variables are very handy.
+The most obvious case is to check is program already available in user's `PATH`.
+You may want to have this knowledge to run dependencies.
+E.g. install `nvm` with `node` when you are going to install `yarn`.
+
+`lmm` allows to add shell variables in several steps:
+
+. Create `<variable_name>.sh` file under `roles/<my_roles>/vars/` directory
+. Put shell code there.
+  This code will be evaluated before an Ansible run and its out becomes value of variable.
+  Like usual shell variable `variable_name=$(sh variable_name.sh)`
+. Use variable (file name w/o `.sh`) in your role.
+
 == Q&A
 
 [qanda]
 Why I don't see 'update/upgrade' command for package/role::
-Current roles are quite simple and doesn't include such cases.
+Current roles are quite simple and don't include such cases.
 However, many roles configure DEB-repos, so you will get updates via `apt`.
 Some packages are provided as `latest` so you may update them by calling `install` again.
 

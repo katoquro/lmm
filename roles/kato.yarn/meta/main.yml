@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: kato.nvm,  when: not is_node_available }
+

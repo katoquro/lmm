@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 RUN apt-get update && \
-    apt-get -y install sudo python3-pip \
+    apt-get -y install sudo curl git python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m lmm-test && echo "lmm-test:lmm-test" | chpasswd && adduser lmm-test sudo \

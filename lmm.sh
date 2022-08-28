@@ -77,6 +77,14 @@ EOF
 install() {
   role=${1:?}
 
+  # shellcheck disable=SC2207
+  shell_vars=($( (cd roles/"${role}"/vars/ && ls *.sh) 2>/dev/null))
+
+  vars_for_yml=''
+  for sv in "${shell_vars[@]}"; do
+    vars_for_yml="${vars_for_yml}    ${sv/.sh/}: \"{{ $(cd roles/"${role}"/vars/ && sh "$sv") }}\"\n"
+  done
+
   cat >${INSTALL_ROLE_FILE} <<EOF
 ---
 - hosts: localhost
@@ -84,6 +92,7 @@ install() {
 
   vars:
     _user: "{{ ansible_env.USER }}"
+$(echo -e "$vars_for_yml")
 
   roles:
   - role: ${role}
