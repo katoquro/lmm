@@ -91,7 +91,7 @@ install() {
   role=${1:?}
 
   # shellcheck disable=SC2207
-  shell_vars=($( (cd roles/"${role}"/vars/ && ls *.sh) 2>/dev/null))
+  shell_vars=($( (cd roles/"${role}"/vars/ && ls *.sh) 2>/dev/null || true))
 
   vars_for_yml=''
   for sv in "${shell_vars[@]}"; do
