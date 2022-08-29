@@ -30,7 +30,7 @@ And you can see all steps which are required to install 1Password
 - name: add repo key
   become: true
   apt_key:
-    keyring: /usr/share/keyrings/1password-archive-keyring.gpg
+    keyring: /etc/apt/trusted.gpg.d/1password-archive-keyring.gpg
     keyserver: keyserver.ubuntu.com
     id: 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
 
@@ -43,7 +43,7 @@ And you can see all steps which are required to install 1Password
   become: true
   apt:
     pkg:
-    - 1password
+      - 1password
 ----
 
 And you can see all steps which require `sudo`: they are `become: true` (means become the superuser)
