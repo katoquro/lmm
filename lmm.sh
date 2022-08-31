@@ -156,8 +156,10 @@ version) # - print current version
   log_info "${MAJOR_VERSION}.${MINOR_VERSION}"
   ;;
 
-u | update) # - shortcut for git pull 😀
-  git pull
+u | update) # - get new packages and show udpated
+  git fetch
+  git rev-list HEAD..origin --no-commit-header --format='%C(yellow)%h %C(bold cyan)%B %Creset'
+  git pull -n
   ;;
 
 l | list) # - list all available roles
