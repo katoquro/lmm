@@ -10,7 +10,7 @@ RUN useradd -m lmm-test && echo "lmm-test:lmm-test" | chpasswd && adduser lmm-te
 RUN pip3 install ansible
 ENV PATH="${PATH}:/home/lmm-test/.local/bin"
 
-RUN install -g lmm-test -o lmm-test -d /opt/lmm
+RUN install -g lmm-test -o lmm-test -d /opt/lmm -d /home/lmm-test/.local/bin
 
 COPY ./test/test.sh ./lmm.sh /opt/lmm/
 COPY ./roles /opt/lmm/roles

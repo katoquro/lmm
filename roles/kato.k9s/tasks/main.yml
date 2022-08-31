@@ -1,0 +1,8 @@
+---
+- name: download and install
+  unarchive:
+    src: "https://github.com/derailed/k9s/releases/download/{{ _version }}/k9s_Linux_x86_64.tar.gz"
+    dest: "/home/{{ _user }}/.local/bin"
+    include:
+      - k9s
+    remote_src: yes
