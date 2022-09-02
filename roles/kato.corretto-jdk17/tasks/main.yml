@@ -1,0 +1,16 @@
+- name: add repo key
+  become: true
+  apt_key:
+    url: https://apt.corretto.aws/corretto.key
+    keyring: /etc/apt/trusted.gpg.d/corretto.gpg
+
+- name: add repo
+  become: true
+  apt_repository:
+    repo: deb https://apt.corretto.aws stable main
+
+- name: install
+  become: true
+  apt:
+    pkg:
+      - java-17-amazon-corretto-jdk

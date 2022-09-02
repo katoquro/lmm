@@ -1,0 +1,19 @@
+---
+- name: repo key
+  become: true
+  apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    keyring: /etc/apt/trusted.gpg.d/microsoft.gpg
+
+- name: add repo
+  become: true
+  apt_repository:
+    repo: deb [arch=amd64] https://packages.microsoft.com/repos/ms-teams stable main
+    filename: teams
+    update_cache: yes
+
+- name: install
+  become: true
+  apt:
+    pkg:
+    - teams
