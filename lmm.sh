@@ -161,7 +161,7 @@ version) # - print current version
 
 u | update) # - get new packages and show udpated
   git fetch
-  git rev-list HEAD..origin --no-commit-header --format='%C(yellow)%h %C(bold cyan)%B %Creset'
+  git rev-list HEAD..origin/master --no-commit-header --format='%C(yellow)%h %C(bold cyan)%B %Creset'
   git pull -n
   ;;
 
