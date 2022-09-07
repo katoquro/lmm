@@ -1,0 +1,13 @@
+---
+- name: Download and Install
+  unarchive:
+    # https://golang.org/dl/
+    src: "https://github.com/ainrif/acorn/releases/download/{{ _version }}/acorn-{{ _version }}.zip"
+    dest: "{{ _install_dir }}"
+    remote_src: yes
+
+- name: Create go symlink
+  file:
+    src: "{{ _install_dir }}/acorn-{{ _version }}/bin/acorn"
+    dest: "{{ _local_bin }}/acorn"
+    state: link
