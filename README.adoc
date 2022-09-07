@@ -96,6 +96,14 @@ Roles have convenient variables:
 
 - `{{ _user }}` - current username.
 May be used to give rights or find home folder.
+
+- `{{ _install_dir }}` - path to `~/.local/share/lmm`.
+May be used to install packages w/o sudo there.
+
+- `{{ _local_bin }}` - path to `~/.local/bin`.
+This path is used to create symlinks to installed packages w/o sudo.
+If you are using Gnome with Xorg it should be already in your `PATH`.
+
 - `{{ ansible_distribution_release }}` - ubuntu release like bionic, focal, jammy, etc.
 May be used in repo path.
 

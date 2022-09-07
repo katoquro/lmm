@@ -18,6 +18,7 @@ APP_PATH="$(dirname "$(readlink -f "$0")")"
 
 cd "${APP_PATH}"
 mkdir -p "${CACHE_DIR}"
+mkdir -p ~/.local/share/lmm
 
 #
 # Logs
@@ -105,6 +106,8 @@ install() {
 
   vars:
     _user: "{{ ansible_env.USER }}"
+    _install_dir: "/home/{{ ansible_env.USER }}/.local/share/lmm"
+    _local_bin: "/home/{{ ansible_env.USER }}/.local/bin"
 $(echo -e "$vars_for_yml")
 
   roles:
@@ -142,9 +145,9 @@ test() {
 
 echo "  :: Start at $(date)" >>"${LOG_FILE}"
 
-init_ansible
-
 check_sudo_session
+
+init_ansible
 
 case "$1" in
 
