@@ -1,0 +1,16 @@
+---
+- name: Download aws archive
+  unarchive:
+    src: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+    dest: /tmp/
+    remote_src: yes
+
+- name: create installation dir
+  file:
+    path: "{{ _install_dir }}/aws/"
+    state: directory
+
+- name: Install in NO sudo mode
+  shell:
+    cmd: "./install --bin-dir {{ _local_bin }} --install-dir {{ _install_dir }}/aws-cli/"
+    chdir: /tmp/aws/
