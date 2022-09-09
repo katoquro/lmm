@@ -1,7 +1,6 @@
 ---
 - name: Download and Install
   unarchive:
-    # https://golang.org/dl/
     src: "https://github.com/ainrif/acorn/releases/download/{{ _version }}/acorn-{{ _version }}.zip"
     dest: "{{ _install_dir }}"
     remote_src: yes
