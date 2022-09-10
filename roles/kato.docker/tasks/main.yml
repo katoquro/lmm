@@ -8,6 +8,7 @@
       - curl
       - gnupg-agent
       - software-properties-common
+      - python3-pip
 
 - name: repo key
   become: true
