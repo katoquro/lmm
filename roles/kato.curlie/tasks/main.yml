@@ -1,0 +1,8 @@
+---
+- name: download and install
+  unarchive:
+    src: "https://github.com/rs/curlie/releases/download/v{{ _version }}/curlie_{{ _version }}_linux_amd64.tar.gz"
+    dest: "/home/{{ _user }}/.local/bin"
+    include:
+      - curlie
+    remote_src: yes
