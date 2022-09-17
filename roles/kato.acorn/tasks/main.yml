@@ -1,12 +1,18 @@
 ---
+- name: Remove previous version
+  file:
+    state: absent
+    path: "{{ _install_dir }}/acorn"
+    force: yes
+
 - name: Download and Install
   unarchive:
-    src: "https://github.com/ainrif/acorn/releases/download/{{ _version }}/acorn-{{ _version }}.zip"
+    src: "https://github.com/ainrif/acorn/releases/latest/download/acorn.zip"
     dest: "{{ _install_dir }}"
     remote_src: yes
 
 - name: Create go symlink
   file:
-    src: "{{ _install_dir }}/acorn-{{ _version }}/bin/acorn"
+    src: "{{ _install_dir }}/acorn/bin/acorn"
     dest: "{{ _local_bin }}/acorn"
     state: link
