@@ -1,0 +1,6 @@
+---
+- name: download and install
+  become: true
+  apt:
+    deb: "https://download.pop.com/desktop-app/linux/{{ _version }}/pop_{{ _version }}_amd64.deb"
+
