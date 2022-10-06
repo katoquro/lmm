@@ -8,7 +8,7 @@
 - name: add repo
   become: true
   apt_repository:
-    repo: deb [signed-by=/etc/apt/keyrings/github_git-lfs-archive-keyring.gpg] https://packagecloud.io/github/git-lfs/ubuntu {{ ansible_distribution_release }} main
+    repo: deb [signed-by=/etc/apt/trusted.gpg.d/github_git-lfs-archive-keyring.gpg] https://packagecloud.io/github/git-lfs/ubuntu {{ ansible_distribution_release }} main
 
 - name: install
   become: true
