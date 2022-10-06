@@ -1,0 +1,12 @@
+---
+- name: Download
+  unarchive:
+    src: "https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-{{ _version }}.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: install to {{ _local_bin }}
+  copy:
+    src: "/tmp/jetbrains-toolbox-{{ _version }}/jetbrains-toolbox"
+    dest: "{{ _local_bin }}"
+    mode: u+x
