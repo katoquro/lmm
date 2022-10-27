@@ -1,0 +1,5 @@
+---
+- name: install
+  become: true
+  apt:
+    deb: https://github.com/Kong/insomnia/releases/download/core%40{{ _version }}/Insomnia.Core-{{ _version }}.deb
