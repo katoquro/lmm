@@ -1,0 +1,20 @@
+---
+- name: download and install Appimage
+  get_url:
+    url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v{{ _version }}/Obsidian-{{ _version }}.AppImage"
+    dest: "{{ _local_bin }}/obsidian"
+    mode: "u+x"
+
+- file:
+    path: "{{ _install_dir }}/obsidian"
+    state: "directory"
+
+- name: copy icon file
+  copy:
+    src: "obsidian.png"
+    dest: "{{ _install_dir }}/obsidian/obsidian.png"
+
+- name: copy icon file
+  template:
+    src: "Obsidian.desktop.j2"
+    dest: "/home/{{ _user }}/.local/share/applications/Obsidian.desktop"
