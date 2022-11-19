@@ -1,0 +1,11 @@
+---
+- name: Download Reaper archive
+  unarchive:
+    src: "https://www.reaper.fm/files/{{ _version_major }}/reaper{{ _version }}_linux_x86_64.tar.xz"
+    dest: /tmp/
+    remote_src: yes
+
+- name: Install in NO sudo mode
+  shell:
+    cmd: "./install-reaper.sh --install {{ _install_dir }} --integrate-user-desktop"
+    chdir: /tmp/reaper_linux_x86_64/
