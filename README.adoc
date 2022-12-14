@@ -1,13 +1,15 @@
-= lmm - Local machine manager
+= lmm - Linux machine manager
 :toc:
 
 A simple Ansible wrapper to install Roles as packages and share them.
 
+Check https://github.com/katoquro/lmm/tree/master/roles[list of available software] w/o intalling `lmm`.
+
 == Why do you need this
 
-This is a small script which allows you to install packages from Roles (a.k.a recepies).
+This is a small script which allows you to install packages from Roles (a.k.a. recipes).
 
-NOTE: Currently, it's focused and tested on Ubuntu
+NOTE: Currently, it's focused on DEB-based distros and tested on Ubuntu
 
 Many packages of Ubuntu Linux have outdated versions or require 3rd party repositories (like Google Chrome or 1Password).
 Some of them don't even have DEB-repo and should be installed by steps (Like Go-lang or NVM).
@@ -21,7 +23,7 @@ and you can use power of https://www.ansible.com/[Ansible] to describe steps to 
 lmm install kato.1password
 ----
 
-And you can see all steps which are required to install 1Password
+And you can see all steps `lmm` does to install 1Password
 
 ../roles/kato.1password
 [soirce,yml]
@@ -85,7 +87,7 @@ ln -s "$(pwd)/lmm.sh" ~/.local/bin/lmm
 ----
 
 
-== How to create role
+== How to create custom roles
 
 The full doc you can find at https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html[Ansible site]
 
