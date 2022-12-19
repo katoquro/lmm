@@ -1,42 +1,52 @@
-# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 ---
-- name: install dependencies
+- name: Install requirements
   become: true
-  apt:
+  ansible.builtin.apt:
     pkg:
       - apt-transport-https
       - ca-certificates
       - curl
       - gnupg
 
-- name: repo key
+- name: Add Docker Repo key
   become: true
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     keyring: /etc/apt/trusted.gpg.d/docker.gpg
 
 - name: Get DEB architecture
-  shell: dpkg --print-architecture
+  ansible.builtin.command: dpkg --print-architecture
   register: deb_architecture
+  changed_when: deb_architecture.rc != 0
 
-- name: repo
+- name: Add Docker Repo
   become: true
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-    update_cache: yes
+    update_cache: true
 
-- name: install docker
+- name: Install docker
   become: true
-  apt:
+  ansible.builtin.apt:
     pkg:
       - docker-ce
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
 
-- name: adding existing user '{{ _user }}' to group docker
+- name: Adding existing user '{{ _user }}' to group docker
   become: true
-  user:
+  ansible.builtin.user:
     name: "{{ _user }}"
     groups: docker
-    append: yes
+    append: true
+
+- name: Create a symbolic to docker-compose
+  become: true
+  when: docker_compose_compatibility == 'true'
+  ansible.builtin.copy:
+    src: docker-compose
+    dest: /usr/bin/docker-compose
+    mode: '755'
+    owner: root
+    group: root
