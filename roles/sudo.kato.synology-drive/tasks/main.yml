@@ -1,0 +1,6 @@
+---
+- name: install
+  become: true
+  apt:
+    # https://www.synology.com/en-global/support/download/DS723+?version=7.1#utilities
+    deb: "https://global.download.synology.com/download/Utility/SynologyDriveClient/{{ _version }}-{{ _build }}/Ubuntu/Installer/x86_64/synology-drive-client-{{ _build }}.x86_64.deb"
