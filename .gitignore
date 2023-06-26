@@ -1,5 +1,6 @@
 .idea
 .lmm-cache
 collections
+.vscode
 
 .install.yml

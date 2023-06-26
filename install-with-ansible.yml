@@ -1,0 +1,38 @@
+---
+- name: Insall LMM with Ansible
+  hosts: localhost
+  connection: local
+
+  vars:
+    _user: "{{ ansible_env.USER }}"
+    _install_dir: "/home/{{ ansible_env.USER }}/.local/share/lmm"
+    _local_bin: "/home/{{ ansible_env.USER }}/.local/bin"
+
+  tasks:
+    - name: Make sure that LMM directories are exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ _install_dir }}"
+        - "{{ _local_bin }}"
+        - "{{ _install_dir }}/lmm"
+
+    - name: Clone LMM repository to install directory
+      ansible.builtin.git:
+        repo: git@github.com:katoquro/lmm.git
+        dest: "{{ _install_dir }}/lmm"
+        version: master
+        update: true
+
+    - name: Create Symlink for LMM to the user local bin directory
+      ansible.builtin.file:
+        src: '{{ _install_dir }}/lmm/lmm.sh'
+        dest: '{{ _install_dir }}/bin/lmm'
+        state: link
+
+    - name: Check that console command runs w/o errors
+      ansible.builtin.command:
+        cmd: lmm -c
+      changed_when: false
