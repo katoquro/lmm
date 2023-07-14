@@ -1,0 +1,27 @@
+# Got data from ppa:serge-rider/dbeaver-ce but installed as classic repo to use /etc/apt/trusted.gpg.d for keyring
+---
+- name: Cleanup old sources list
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/ppa_serge_rider_dbeaver_ce_jammy.list
+    state: absent
+# ^^^
+
+- name: Add repo key
+  become: true
+  ansible.builtin.apt_key:
+    keyring: /etc/apt/trusted.gpg.d/dbeaver-keyring.gpg
+    keyserver: keyserver.ubuntu.com
+    id: 30ECE32520D438C21E16BF884A71B51882788FD2
+
+- name: Add repo
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/dbeaver-keyring.gpg] https://ppa.launchpadcontent.net/serge-rider/dbeaver-ce/ubuntu {{ ansible_distribution_release }} main"
+    filename: lmm-dbeaver
+
+- name: install DBeaver CE
+  become: true
+  apt:
+    pkg:
+      - dbeaver-ce
