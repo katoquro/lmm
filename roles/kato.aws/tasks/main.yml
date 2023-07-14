@@ -1,11 +1,24 @@
 ---
 - name: Download aws archive
-  unarchive:
+  ansible.builtin.unarchive:
     src: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
     dest: /tmp/
-    remote_src: yes
+    remote_src: true
+
+- name: Check if dirrectory exists
+  ansible.builtin.stat:
+    path: "{{ _install_dir }}/aws-cli/"
+  register: aws_dir
 
 - name: Install in NO sudo mode
-  shell:
+  ansible.builtin.command:
     cmd: "./install --bin-dir {{ _local_bin }} --install-dir {{ _install_dir }}/aws-cli/"
+    chdir: /tmp/aws/
+    creates: "{{ _install_dir }}/aws-cli/"
+
+- name: Update aws cli
+  when: aws_dir.stat.exists
+  changed_when: true
+  ansible.builtin.command:
+    cmd: "./install --bin-dir {{ _local_bin }} --install-dir {{ _install_dir }}/aws-cli/ --update"
     chdir: /tmp/aws/
