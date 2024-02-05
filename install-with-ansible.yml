@@ -29,10 +29,10 @@
     - name: Create Symlink for LMM to the user local bin directory
       ansible.builtin.file:
         src: '{{ _install_dir }}/lmm/lmm.sh'
-        dest: '{{ _install_dir }}/bin/lmm'
+        dest: '{{ _local_bin }}/lmm'
         state: link
 
     - name: Check that console command runs w/o errors
       ansible.builtin.command:
-        cmd: lmm -c
+        cmd: lmm help
       changed_when: false
