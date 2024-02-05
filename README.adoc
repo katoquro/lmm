@@ -70,7 +70,7 @@ pip3 install ansible
 Copy and run this https://github.com/katoquro/lmm/blob/master/install-with-ansible.yml[playbook] with ansible
 [source,bash]
 ----
-curl -s https://raw.githubusercontent.com/katoquro/lmm/master/install-with-ansible.yml | ansible-playbook -
+curl -s -o /tmp/lmm.yml https://raw.githubusercontent.com/katoquro/lmm/master/install-with-ansible.yml && ansible-playbook /tmp/lmm.yml
 ----
 
 === Manual installation
