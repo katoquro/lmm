@@ -1,5 +1,5 @@
 ---
-- name: Insall LMM with Ansible
+- name: Install LMM with Ansible
   hosts: localhost
   connection: local
 

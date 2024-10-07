@@ -1,0 +1,28 @@
+---
+- name: Install dependencies
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - lsb-release
+
+- name: Add Repo key
+  become: true
+  ansible.builtin.apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    keyring: /etc/apt/keyrings/microsoft.gpg
+
+- name: Add Repo
+  become: true
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_distribution_release }} main
+    filename: azure-cli
+
+- name: Install package
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - azure-cli

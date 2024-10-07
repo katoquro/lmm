@@ -1,0 +1,17 @@
+---
+- name: Add repo key
+  become: true
+  apt_key:
+    keyring: /etc/apt/keyrings/github_git-lfs-archive-keyring.gpg
+    url: https://packagecloud.io/github/git-lfs/gpgkey
+
+- name: Add repo
+  become: true
+  apt_repository:
+    repo: deb [signed-by=/etc/apt/keyrings/github_git-lfs-archive-keyring.gpg] https://packagecloud.io/github/git-lfs/ubuntu {{ ansible_distribution_release }} main
+
+- name: Install
+  become: true
+  apt:
+    pkg:
+      - git-lfs

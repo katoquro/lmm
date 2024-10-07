@@ -1,0 +1,17 @@
+- name: Add repo key
+  become: true
+  apt_key:
+    url: https://apt.corretto.aws/corretto.key
+    keyring: /usr/apt/keyrings/corretto-keyring.gpg
+
+- name: Add repo
+  become: true
+  apt_repository:
+    repo: deb [signed-by=/usr/apt/keyrings/corretto-keyring.gpg] https://apt.corretto.aws stable main
+    filename: corretto
+
+- name: Install JDK LTS
+  become: true
+  apt:
+    pkg:
+      - java-21-amazon-corretto-jdk

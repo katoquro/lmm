@@ -1,18 +1,18 @@
 ---
 - name: Remove previous version
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ _install_dir }}/acorn"
-    force: yes
+    force: true
 
 - name: Download and Install
-  unarchive:
+  ansible.builtin.unarchive:
     src: "https://github.com/ainrif/acorn/releases/latest/download/acorn.zip"
     dest: "{{ _install_dir }}"
-    remote_src: yes
+    remote_src: true
 
 - name: Create go symlink
-  file:
+  ansible.builtin.file:
     src: "{{ _install_dir }}/acorn/bin/acorn"
     dest: "{{ _local_bin }}/acorn"
     state: link

@@ -26,26 +26,9 @@ lmm install kato.1password
 And you can see all steps `lmm` does to install 1Password
 
 ../roles/kato.1password
-[soirce,yml]
+[source,yml]
 ----
----
-- name: add repo key
-  become: true
-  apt_key:
-    keyring: /etc/apt/trusted.gpg.d/1password-archive-keyring.gpg
-    keyserver: keyserver.ubuntu.com
-    id: 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
-
-- name: add repo
-  become: true
-  apt_repository:
-    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main
-
-- name: install
-  become: true
-  apt:
-    pkg:
-      - 1password
+include::roles/sudo.kato.1password/tasks/main.yml[]
 ----
 
 And you can see all steps which require `sudo`: they are `become: true` (means become the superuser)
@@ -130,7 +113,7 @@ E.g. install `nvm` with `node` when you are going to install `yarn`.
 `lmm` allows to add shell variables in several steps:
 
 . Create `<variable_name>.sh` file under `roles/<my_roles>/vars/` directory
-. Put shell code there.
+. Put a shell code there with `echo` for return value
   This code will be evaluated before an Ansible run and its out becomes value of variable.
   Like usual shell variable `variable_name=$(sh variable_name.sh)`
 . Use variable (file name w/o `.sh`) in your role.

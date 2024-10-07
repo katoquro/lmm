@@ -99,9 +99,24 @@ install() {
     vars_for_yml="${vars_for_yml}    ${sv/.sh/}: \"{{ $(cd roles/"${role}"/vars/ && sh "$sv") }}\"\n"
   done
 
+  prepare_for_sudo=''
+  if [[ "${role}" == "sudo."* ]]; then
+    prepare_for_sudo=$(
+      cat <<EOF
+  tasks:
+    - name: Ensure /etc/apt/keyrings  exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+EOF
+    )
+  fi
+
   cat >${INSTALL_ROLE_FILE} <<EOF
 ---
-- hosts: localhost
+- name: Install ${role}
+  hosts: localhost
   connection: local
 
   vars:
@@ -110,9 +125,12 @@ install() {
     _local_bin: "/home/{{ ansible_env.USER }}/.local/bin"
 $(echo -e "$vars_for_yml")
 
+${prepare_for_sudo}
+
   roles:
-  - role: ${role}
-    tags: ${role}
+    - role: ${role}
+      tags: ${role}
+
 EOF
 
   # disable outside roles to prevent names clash
