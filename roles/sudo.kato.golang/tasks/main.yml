@@ -1,4 +1,10 @@
 ---
+- name: Cleanup old Go lang version
+  become: true
+  file:
+    path: /usr/local/go
+    state: absent
+
 - name: Download and Install golang
   become: true
   unarchive:
