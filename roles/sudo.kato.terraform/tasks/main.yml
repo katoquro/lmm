@@ -1,18 +1,22 @@
 ---
-- name: repo key
-  become: true
-  apt_key:
-    url: https://apt.releases.hashicorp.com/gpg
-    keyring: /etc/apt/keyrings/hashicorp.gpg
+- name: Get DEB architecture
+  ansible.builtin.command: dpkg --print-architecture
+  register: deb_architecture
+  changed_when: deb_architecture.rc != 0
 
-- name: add repo
+- name: Add repo
   become: true
-  apt_repository:
-    repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
-    filename: hashicorp
+  ansible.builtin.deb822_repository:
+    name: hashicorp
+    uris: https://apt.releases.hashicorp.com
+    architectures: '{{ deb_architecture.stdout }}'
+    suites: {{ ansible_distribution_release }}
+    components:
+      - main
+    signed_by: https://apt.releases.hashicorp.com/gpg
 
-- name: install
+- name: Install
   become: true
-  apt:
+  ansible.builtin.apt:
     pkg:
       - terraform

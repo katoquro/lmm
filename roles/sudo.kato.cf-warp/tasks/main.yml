@@ -1,0 +1,17 @@
+---
+- name: Add repo
+  become: true
+  ansible.builtin.deb822_repository:
+    name: cloudflare-warp
+    uris: https://pkg.cloudflareclient.com
+    suites: '{{ ansible_distribution_release }}'
+    components:
+      - main
+    signed_by: https://pkg.cloudflareclient.com/pubkey.gpg
+
+- name: Install cloudflare-warp
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - cloudflare-warp

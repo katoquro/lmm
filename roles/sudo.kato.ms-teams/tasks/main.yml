@@ -1,18 +1,22 @@
 ---
-- name: repo key
-  become: true
-  apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
-    keyring: /etc/apt/keyrings/microsoft.gpg
+- name: Get DEB architecture
+  ansible.builtin.command: dpkg --print-architecture
+  register: deb_architecture
+  changed_when: deb_architecture.rc != 0
 
-- name: add repo
+- name: Add repo
   become: true
-  apt_repository:
-    repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main
-    filename: teams
+  ansible.builtin.deb822_repository:
+    name: teams
+    uris: https://packages.microsoft.com/repos/ms-teams
+    architectures: '{{ deb_architecture.stdout }}'
+    suites: stable
+    components:
+      - main
+    signed_by: https://packages.microsoft.com/keys/microsoft.asc
 
-- name: install
+- name: Install
   become: true
-  apt:
+  ansible.builtin.apt:
     pkg:
       - teams

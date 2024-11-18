@@ -1,18 +1,5 @@
 ---
-- name: add repo key
-  become: true
-  apt_key:
-    url: https://dl-ssl.google.com/linux/linux_signing_key.pub
-    keyring: /etc/apt/keyrings/chrome.gpg
-
-- name: add repo
-  become: true
-  apt_repository:
-    repo: deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main
-    filename: google-chrome
-
-- name: install
+- name: Install Chrome deb
   become: true
   apt:
-    pkg:
-      - google-chrome-stable
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb

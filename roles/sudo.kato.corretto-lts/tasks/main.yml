@@ -1,17 +1,17 @@
-- name: Add repo key
-  become: true
-  apt_key:
-    url: https://apt.corretto.aws/corretto.key
-    keyring: /usr/apt/keyrings/corretto-keyring.gpg
-
+---
 - name: Add repo
   become: true
-  apt_repository:
-    repo: deb [signed-by=/usr/apt/keyrings/corretto-keyring.gpg] https://apt.corretto.aws stable main
-    filename: corretto
+  ansible.builtin.deb822_repository:
+    name: corretto
+    uris: "https://apt.corretto.aws"
+    suites: stable
+    components:
+      - main
+    signed_by: https://apt.corretto.aws/corretto.key
 
 - name: Install JDK LTS
   become: true
-  apt:
+  ansible.builtin.apt:
+    update_cache: true
     pkg:
       - java-21-amazon-corretto-jdk

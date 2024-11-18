@@ -1,19 +1,16 @@
 # Got data from ppa:serge-rider/dbeaver-ce but installed as classic repo to use /etc/apt/trusted.gpg.d for keyring
 ---
-- name: Add repo key
-  become: true
-  ansible.builtin.apt_key:
-    url: https://dbeaver.io/debs/dbeaver.gpg.key
-    keyring: /etc/apt/keyrings/dbeaver.gpg.key
-
 - name: Add repo
   become: true
-  ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/dbeaver.gpg.key] https://ppa.launchpadcontent.net/serge-rider/dbeaver-ce/ubuntu {{ ansible_distribution_release }} main"
-    filename: dbeaver
+  ansible.builtin.deb822_repository:
+    name: dbeaver
+    uris: https://dbeaver.io/debs/dbeaver-ce
+    suites: '/'
+    signed_by: https://dbeaver.io/debs/dbeaver.gpg.key
 
-- name: install DBeaver CE
+- name: Install DBeaver CE
   become: true
-  apt:
+  ansible.builtin.apt:
+    update_cache: true
     pkg:
       - dbeaver-ce
