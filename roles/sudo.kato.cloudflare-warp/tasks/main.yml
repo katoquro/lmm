@@ -1,0 +1,23 @@
+---
+- name: Get DEB architecture
+  ansible.builtin.command: dpkg --print-architecture
+  register: deb_architecture
+  changed_when: deb_architecture.rc != 0
+
+- name: Add repo
+  become: true
+  ansible.builtin.deb822_repository:
+    name: cloudflare
+    uris: "https://pkg.cloudflareclient.com/"
+    architectures: '{{ deb_architecture.stdout }}'
+    suites: "{{ ansible_distribution_release }}"
+    components:
+      - main
+    signed_by: https://pkg.cloudflareclient.com/pubkey.gpg
+
+- name: Install Cloudflare WARP
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - java-21-amazon-corretto-jdk
