@@ -1,12 +1,12 @@
 ---
 - name: Download
-  unarchive:
+  ansible.builtin.unarchive:
     src: "https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-{{ _version }}.tar.gz"
     dest: "/tmp"
-    remote_src: yes
+    remote_src: true
 
-- name: install to {{ _local_bin }}
-  copy:
+- name: Install to {{ _local_bin }}
+  ansible.builtin.copy:
     src: "/tmp/jetbrains-toolbox-{{ _version }}/jetbrains-toolbox"
     dest: "{{ _local_bin }}"
     mode: u+x

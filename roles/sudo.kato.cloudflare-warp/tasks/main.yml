@@ -7,16 +7,17 @@
 - name: Add repo
   become: true
   ansible.builtin.deb822_repository:
-    name: hashicorp
-    uris: https://apt.releases.hashicorp.com
+    name: cloudflare
+    uris: "https://pkg.cloudflareclient.com/"
     architectures: '{{ deb_architecture.stdout }}'
-    suites: {{ ansible_distribution_release }}
+    suites: "{{ ansible_distribution_release }}"
     components:
       - main
-    signed_by: https://apt.releases.hashicorp.com/gpg
+    signed_by: https://pkg.cloudflareclient.com/pubkey.gpg
 
-- name: Install
+- name: Install Cloudflare WARP
   become: true
   ansible.builtin.apt:
+    update_cache: true
     pkg:
-      - terraform
+      - java-21-amazon-corretto-jdk

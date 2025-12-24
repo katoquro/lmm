@@ -1,13 +1,13 @@
 ---
-- name: install NVM
-  git:
+- name: Install NVM
+  ansible.builtin.git:
     repo: https://github.com/nvm-sh/nvm.git
     dest: ~/.nvm
     version: "{{ _version }}"
     depth: 1
 
-- name: install current Node LTS
-  shell:
+- name: Install current Node LTS
+  ansible.builtin.shell:
     cmd: |
       export NVM_DIR="$HOME/.nvm"
       source "${NVM_DIR}/nvm.sh"

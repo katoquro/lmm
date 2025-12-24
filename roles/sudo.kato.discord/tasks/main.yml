@@ -1,5 +1,0 @@
----
-- name: install
-  become: true
-  apt:
-    deb: https://dl.discordapp.net/apps/linux/{{ _version }}/discord-{{ _version }}.deb

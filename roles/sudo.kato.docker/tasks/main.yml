@@ -8,33 +8,33 @@
       - curl
       - gnupg
 
-- name: Add Docker Repo key
-  become: true
-  ansible.builtin.apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    keyring: /etc/apt/keyrings/docker.gpg
-
 - name: Get DEB architecture
   ansible.builtin.command: dpkg --print-architecture
   register: deb_architecture
   changed_when: deb_architecture.rc != 0
 
-- name: Add Docker Repo
+- name: Add repo
   become: true
-  ansible.builtin.apt_repository:
-    repo: "deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-    filename: docker
+  ansible.builtin.deb822_repository:
+    name: docker
+    uris: https://download.docker.com/linux/ubuntu
+    architectures: '{{ deb_architecture.stdout }}'
+    suites: '{{ ansible_distribution_release }}'
+    components:
+      - stable
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
 
 - name: Install docker
   become: true
   ansible.builtin.apt:
+    update_cache: true
     pkg:
       - docker-ce
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
 
-- name: Adding existing user '{{ _user }}' to group docker
+- name: Adding user to group 'docker'. User '{{ _user }}'
   become: true
   ansible.builtin.user:
     name: "{{ _user }}"

@@ -9,20 +9,20 @@
       - gnupg-agent
       - lsb-release
 
-- name: Add Repo key
+- name: Add repo
   become: true
-  ansible.builtin.apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
-    keyring: /etc/apt/keyrings/microsoft.gpg
-
-- name: Add Repo
-  become: true
-  ansible.builtin.apt_repository:
-    repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_distribution_release }} main
-    filename: azure-cli
+  ansible.builtin.deb822_repository:
+    name: azure-cli
+    uris: https://packages.microsoft.com/repos/azure-cli/
+    architectures: amd64
+    suites: '{{ ansible_distribution_release }}'
+    components:
+      - main
+    signed_by: https://packages.microsoft.com/keys/microsoft.asc
 
 - name: Install package
   become: true
   ansible.builtin.apt:
+    update_cache: true
     pkg:
       - azure-cli
