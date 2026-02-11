@@ -1,0 +1,20 @@
+---
+
+- name: Create install directory
+  ansible.builtin.file:
+    path: "{{ _install_dir }}/fnm-linux-{{ _version }}"
+    state: directory
+    mode: '0755'
+
+- name: Download and Install fnm
+  ansible.builtin.unarchive:
+    src: "https://github.com/Schniz/fnm/releases/download/v{{ _version }}/fnm-linux.zip"
+    dest: "{{ _install_dir }}/fnm-linux-{{ _version }}/"
+    creates: "{{ _install_dir }}/fnm-linux-{{ _version }}/fnm"
+    remote_src: true
+
+- name: Create symlinks
+  ansible.builtin.file:
+    src: "{{ _install_dir }}/fnm-linux-{{ _version }}/fnm"
+    dest: "{{ _local_bin }}/fnm"
+    state: link
