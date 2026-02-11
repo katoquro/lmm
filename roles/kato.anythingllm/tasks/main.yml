@@ -1,0 +1,44 @@
+---
+# AnythingLLM Desktop AppImage installation
+# Uses --no-sandbox flag to avoid AppArmor SUID issues
+# Alternative: Create AppArmor profile manually if needed
+# Reference: https://askubuntu.com/a/1512288
+
+- name: Create installation directory
+  ansible.builtin.file:
+    path: "{{ _install_dir }}/anythingllm"
+    state: directory
+    mode: '0755'
+  register: __install_dir
+
+- name: Download AnythingLLM AppImage
+  ansible.builtin.get_url:
+    url: "{{ _appimage_url }}"
+    dest: "{{ __install_dir.path }}/AnythingLLMDesktop.AppImage"
+    mode: "u+x"
+
+- name: Create symlink for command-line access
+  ansible.builtin.file:
+    src: "{{ __install_dir.path }}/AnythingLLMDesktop.AppImage"
+    dest: "{{ _local_bin }}/anythingllm"
+    state: link
+
+- name: Ensure applications directory exists
+  ansible.builtin.file:
+    path: "/home/{{ _user }}/.local/share/applications"
+    state: directory
+    mode: '0755'
+
+- name: Create desktop entry
+  ansible.builtin.copy:
+    dest: "/home/{{ _user }}/.local/share/applications/anythingllmdesktop.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Name=AnythingLLM Desktop
+      Exec={{ _local_bin }}/anythingllm --no-sandbox
+      Icon=/home/{{ _user }}/.config/anythingllm-desktop/storage/icon.png
+      Categories=Utility;
+      StartupWMClass=anythingllm-desktop
+      Comment=AI document assistant and knowledge management
