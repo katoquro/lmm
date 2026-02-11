@@ -1,31 +1,45 @@
 ---
-- name: download and install Appimage
-  get_url:
+- name: Create Dir for Version
+  ansible.builtin.file:
+    path: "{{ _install_dir }}/obsidian/{{ _version }}"
+    state: directory
+    mode: '0755'
+  register: __install_dir
+
+- name: Download and install AppImage
+  ansible.builtin.get_url:
     url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v{{ _version }}/Obsidian-{{ _version }}.AppImage"
-    dest: "{{ _local_bin }}/obsidian"
+    dest: "{{ __install_dir.path }}/Obsidian.AppImage"
     mode: "u+x"
 
-- name: extract icon and desktop file
-  command:
+- name: Create symlink
+  ansible.builtin.file:
+    src: "{{ __install_dir.path }}/Obsidian.AppImage"
+    dest: "{{ _local_bin }}/obsidian"
+    state: link
+
+- name: Extract Icon and Desktop file
+  ansible.builtin.command:
     argv:
       - "{{ _local_bin }}/obsidian"
       - "--appimage-extract"
     chdir: "/tmp"
+  changed_when: true
 
-- name: copy icon file
-  copy:
+- name: Copy Icon Files
+  ansible.builtin.copy:
     src: "/tmp/squashfs-root/usr/share/icons/"
     dest: "/home/{{ _user }}/.local/share/icons/"
 
-- name: copy desktop file
-  copy:
+- name: Copy Desktop File
+  ansible.builtin.copy:
     src: "/tmp/squashfs-root/obsidian.desktop"
     dest: "/home/{{ _user }}/.local/share/applications/"
 
-- name: configure exec command
-  ini_file:
+- name: Configure exec command
+  community.general.ini_file:
     path: "/home/{{ _user }}/.local/share/applications/obsidian.desktop"
     section: Desktop Entry
     option: Exec
-    value: "{{ _local_bin }}/obsidian"
+    value: "{{ _local_bin }}/obsidian --no-sandbox"
     backup: false

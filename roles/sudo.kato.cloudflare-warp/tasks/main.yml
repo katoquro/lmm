@@ -20,4 +20,4 @@
   ansible.builtin.apt:
     update_cache: true
     pkg:
-      - java-21-amazon-corretto-jdk
+      - cloudflare-warp

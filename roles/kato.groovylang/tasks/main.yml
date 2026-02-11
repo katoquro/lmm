@@ -1,13 +1,13 @@
 ---
-- name: Download and Install golang
-  unarchive:
+- name: Download and Install Groovy Lang
+  ansible.builtin.unarchive:
     # https://groovy-lang.org/install.html
     src: "https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-{{ _version }}.zip"
     dest: "{{ _install_dir }}"
-    remote_src: yes
+    remote_src: true
 
 - name: Create symlinks
-  file:
+  ansible.builtin.file:
     src: "{{ _install_dir }}/groovy-{{ _version }}/bin/{{ item }}"
     dest: "{{ _local_bin }}/{{ item }}"
     state: link

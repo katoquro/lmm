@@ -1,12 +1,13 @@
 ---
-- name: Download
+- name: Download and Install JetBrains Toolbox
   ansible.builtin.unarchive:
     src: "https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-{{ _version }}.tar.gz"
-    dest: "/tmp"
+    dest: "{{ _install_dir }}"
+    creates: "{{ _install_dir }}/jetbrains-toolbox-{{ _version }}"
     remote_src: true
 
-- name: Install to {{ _local_bin }}
-  ansible.builtin.copy:
-    src: "/tmp/jetbrains-toolbox-{{ _version }}/jetbrains-toolbox"
-    dest: "{{ _local_bin }}"
-    mode: u+x
+- name: Create symlinks
+  ansible.builtin.file:
+    src: "{{ _install_dir }}/jetbrains-toolbox-{{ _version }}/bin/jetbrains-toolbox"
+    dest: "{{ _local_bin }}/jetbrains-toolbox"
+    state: link

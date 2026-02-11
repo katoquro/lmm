@@ -9,9 +9,9 @@
       - main
     signed_by: https://apt.corretto.aws/corretto.key
 
-- name: Install JDK LTS
+- name: Install JDK AWS Corretto 17
   become: true
   ansible.builtin.apt:
     update_cache: true
     pkg:
-      - java-21-amazon-corretto-jdk
+      - java-17-amazon-corretto-jdk
