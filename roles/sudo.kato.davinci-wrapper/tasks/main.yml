@@ -1,0 +1,62 @@
+#
+#
+---
+- name: Install undated version of Libraries
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - libapr1t64
+      - libaprutil1t64
+      - libasound2t64
+      - libglib2.0-0t64
+      - libxcb-composite0
+      - libxcb-cursor0
+
+- name: Create Deb directory
+  ansible.builtin.file:
+    path: "{{ _install_dir }}/davinci/debs"
+    state: directory
+    mode: '0755'
+  register: __debs_dir
+
+- name: Create Shared Libs directory
+  ansible.builtin.file:
+    path: "{{ _install_dir }}/davinci/24-04-wrapper-libs"
+    state: directory
+    mode: '0755'
+  register: __libs_dir
+
+- name: Download Libraries
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "{{ __debs_dir.path }}/{{ item.dest }}"
+  loop:
+    - { url: "http://ge.archive.ubuntu.com/ubuntu/pool/main/p/pango1.0/libpango-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb", dest: "libpango-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb" }
+    - { url: "http://ge.archive.ubuntu.com/ubuntu/pool/main/p/pango1.0/libpangoft2-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb", dest: "libpangoft2-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb" }
+    - { url: "http://ge.archive.ubuntu.com/ubuntu/pool/main/p/pango1.0/libpangocairo-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb", dest: "libpangocairo-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb" }
+    - { url: "http://ge.archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/libgdk-pixbuf-2.0-0_2.42.8+dfsg-1ubuntu0.4_amd64.deb", dest: "libgdk-pixbuf-2.0-0_2.42.8+dfsg-1ubuntu0.4_amd64.deb" }
+
+- name: Extract Libraries
+  ansible.builtin.command:
+    argv:
+      - "dpkg-deb"
+      - "-x"
+      - "{{ __debs_dir.path }}/{{ item }}"
+      - "{{ __libs_dir.path }}"
+  loop:
+    - "libpango-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb"
+    - "libpangoft2-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb"
+    - "libpangocairo-1.0-0_1.50.6+ds-2ubuntu1_amd64.deb"
+    - "libgdk-pixbuf-2.0-0_2.42.8+dfsg-1ubuntu0.4_amd64.deb"
+
+- name: Copy libs to Davinci installation folder
+  become: true
+  ansible.builtin.copy:
+    src: "{{ __libs_dir.path }}/usr/lib/x86_64-linux-gnu/{{ item }}"
+    dest: "/opt/resolve/libs/{{ item }}"
+    remote_src: true
+  loop:
+    - "libgdk_pixbuf-2.0.so.0"
+    - "libpango-1.0.so.0"
+    - "libpangocairo-1.0.so.0"
+    - "libpangoft2-1.0.so.0"
