@@ -153,8 +153,22 @@ test() {
     log_warn "Use: lmm install kato.docker"
   fi
 
-  docker build -t testing-lmm -f ./test/Dockerfile .
-  docker run -e "TEST_ROLE=$1" --rm testing-lmm
+  BASE_IMAGE="lmm-base"
+  # Check if base image exists
+  if ! docker image inspect "$BASE_IMAGE" >/dev/null 2>&1; then
+    log_info "Building base image $BASE_IMAGE (first time only)"
+    docker build -t "$BASE_IMAGE" -f ./test/Dockerfile .
+  else
+    log_info "Using cached base image $BASE_IMAGE"
+  fi
+
+  # Run test container with current roles and test.sh mounted
+  docker run --rm \
+    -e "TEST_ROLE=$1" \
+    -v "$(pwd)/roles:/opt/lmm/roles" \
+    -v "$(pwd)/test/test.sh:/opt/lmm/test.sh" \
+    -v "$(pwd)/lmm.sh:/opt/lmm/lmm.sh" \
+    "$BASE_IMAGE" bash -c "./test.sh"
 }
 
 #
