@@ -1,0 +1,74 @@
+---
+# Claude Code CLI installation
+# Reimplements bootstrap.sh logic natively
+# Reference: https://claude.ai/download
+
+- name: Detect CPU architecture
+  ansible.builtin.set_fact:
+    _arch: "{{ 'arm64' if ansible_architecture in ['arm64', 'aarch64'] else 'x64' }}"
+
+- name: Check for musl libc
+  ansible.builtin.shell:
+    cmd: set -o pipefail; ldd /bin/ls 2>&1 | grep -q musl && echo musl || echo glibc
+    executable: /bin/bash
+  register: _libc_type
+  changed_when: false
+
+- name: Set platform string
+  ansible.builtin.set_fact:
+    _platform: "linux-{{ _arch }}{{ '-musl' if _libc_type.stdout == 'musl' else '' }}"
+
+- name: Fetch latest Claude Code version
+  ansible.builtin.uri:
+    url: "{{ _gcs_bucket }}/latest"
+    return_content: true
+  register: _latest_version
+
+- name: Fetch release manifest
+  ansible.builtin.uri:
+    url: "{{ _gcs_bucket }}/{{ _latest_version.content | trim }}/manifest.json"
+    return_content: true
+  register: _manifest
+
+- name: Extract version and platform checksum
+  ansible.builtin.set_fact:
+    _version: "{{ _latest_version.content | trim }}"
+    _checksum: "{{ (_manifest.content | from_json).platforms[_platform].checksum }}"
+
+- name: Ensure download directory exists
+  ansible.builtin.file:
+    path: "{{ _download_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Download and verify Claude binary
+  ansible.builtin.get_url:
+    url: "{{ _gcs_bucket }}/{{ _version }}/{{ _platform }}/claude"
+    dest: "{{ _download_dir }}/claude-{{ _version }}-{{ _platform }}"
+    checksum: "sha256:{{ _checksum }}"
+    mode: "0755"
+  register: _claude_binary
+
+- name: Run Claude installer to set up launcher and shell integration
+  ansible.builtin.command:
+    cmd: "{{ _claude_binary.dest }} install"
+  changed_when: true
+  register: _install_output
+
+- name: Show installer output
+  ansible.builtin.debug:
+    msg: >-
+      {{ _install_output.stdout_lines
+         | reject('match', '^\x1b\[\?2026')
+         | map('regex_replace', '\x1b\[1A', '')
+         | map('regex_replace', '\x1b\[2C', '  ')
+         | map('regex_replace', '\x1b\[1C', ' ')
+         | map('regex_replace', '\x1b\[[0-9;?]*[a-zA-Z]', '')
+         | map('trim')
+         | select('match', '.+')
+         | list }}
+
+- name: Remove temporary installer binary
+  ansible.builtin.file:
+    path: "{{ _claude_binary.dest }}"
+    state: absent
