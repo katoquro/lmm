@@ -15,7 +15,9 @@
   ansible.builtin.get_url:
     url: "{{ _appimage_url }}"
     dest: "{{ __install_dir.path }}/AnythingLLMDesktop.AppImage"
+    force: true
     mode: "u+x"
+    timeout: 300
 
 - name: Create symlink for command-line access
   ansible.builtin.file:
