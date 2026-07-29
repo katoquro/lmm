@@ -1,0 +1,68 @@
+---
+# ElegooSlicer AppImage installation
+
+- name: Create installation directory
+  ansible.builtin.file:
+    path: "{{ _install_dir }}/elegoo-slicer"
+    state: directory
+    mode: '0755'
+  register: __install_dir
+
+- name: Download ElegooSlicer AppImage
+  ansible.builtin.get_url:
+    url: "https://github.com/elegoo-repo/ElegooSlicer/releases/download/v{{ _version }}/ElegooSlicer_Linux_Ubuntu2404_V{{ _version }}.AppImage"
+    dest: "{{ __install_dir.path }}/ElegooSlicer.AppImage"
+    force: true
+    mode: "u+x"
+    timeout: 300
+
+- name: Install bundled libmspack dependency
+  ansible.builtin.include_tasks: libmspack.yml
+
+- name: Create launch wrapper script
+  ansible.builtin.copy:
+    dest: "{{ __install_dir.path }}/elegoo-slicer-wrapper.sh"
+    mode: '0755'
+    content: |
+      #!/usr/bin/env bash
+      export LD_LIBRARY_PATH="{{ __install_dir.path }}/libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+      exec "{{ __install_dir.path }}/ElegooSlicer.AppImage" "$@"
+
+- name: Create symlink for command-line access
+  ansible.builtin.file:
+    src: "{{ __install_dir.path }}/elegoo-slicer-wrapper.sh"
+    dest: "{{ _local_bin }}/elegoo-slicer"
+    state: link
+
+- name: Ensure icons directory exists
+  ansible.builtin.file:
+    path: "/home/{{ _user }}/.local/share/icons"
+    state: directory
+    mode: '0755'
+
+- name: Download application icon
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/elegoo-repo/ElegooSlicer/main/resources/images/ElegooSlicer_192px.png"
+    dest: "/home/{{ _user }}/.local/share/icons/elegoo-slicer.png"
+    mode: '0644'
+
+- name: Ensure applications directory exists
+  ansible.builtin.file:
+    path: "/home/{{ _user }}/.local/share/applications"
+    state: directory
+    mode: '0755'
+
+- name: Create desktop entry
+  ansible.builtin.copy:
+    dest: "/home/{{ _user }}/.local/share/applications/elegoo-slicer.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Name=ElegooSlicer
+      Exec={{ _local_bin }}/elegoo-slicer %F
+      Icon=/home/{{ _user }}/.local/share/icons/elegoo-slicer.png
+      Categories=Graphics;3DGraphics;Engineering;
+      Comment=Slicer software for Elegoo 3D printers
+      Terminal=false
+      MimeType=model/stl;application/sla;model/3mf;

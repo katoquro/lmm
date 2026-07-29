@@ -1,0 +1,60 @@
+---
+# ElegooSlicer's AppImage doesn't bundle libmspack, so it's fetched with
+# `apt-get download` (no root, no install) and loaded via LD_LIBRARY_PATH instead.
+# Named "libmspack0t64" due to Ubuntu 24.04's 64-bit time_t package transition.
+
+- name: Create temporary directory for libmspack extraction
+  ansible.builtin.file:
+    path: "{{ __install_dir.path }}/tmp"
+    state: directory
+    mode: '0755'
+
+- name: Download libmspack package via apt (no install)
+  ansible.builtin.command:
+    argv:
+      - "apt-get"
+      - "download"
+      - "libmspack0t64"
+    chdir: "{{ __install_dir.path }}/tmp"
+  changed_when: true
+
+- name: Find downloaded libmspack package
+  ansible.builtin.find:
+    paths: "{{ __install_dir.path }}/tmp"
+    patterns: "libmspack0t64_*.deb"
+  register: __libmspack_deb
+
+- name: Extract libmspack package
+  ansible.builtin.command:
+    argv:
+      - "dpkg-deb"
+      - "-x"
+      - "{{ __libmspack_deb.files[0].path }}"
+      - "{{ __install_dir.path }}/tmp/extract"
+    creates: "{{ __install_dir.path }}/tmp/extract"
+
+- name: Find libmspack shared library files
+  ansible.builtin.find:
+    paths: "{{ __install_dir.path }}/tmp/extract/usr/lib/x86_64-linux-gnu"
+    patterns: "libmspack.so*"
+    file_type: any
+  register: __libmspack_files
+
+- name: Ensure bundled libs directory exists
+  ansible.builtin.file:
+    path: "{{ __install_dir.path }}/libs"
+    state: directory
+    mode: '0755'
+
+- name: Copy libmspack shared libraries to bundled libs directory
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "{{ __install_dir.path }}/libs/{{ item.path | basename }}"
+    mode: preserve
+    remote_src: true
+  loop: "{{ __libmspack_files.files }}"
+
+- name: Remove temporary extraction files
+  ansible.builtin.file:
+    path: "{{ __install_dir.path }}/tmp"
+    state: absent
