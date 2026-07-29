@@ -1,0 +1,17 @@
+---
+- name: Add repo
+  become: true
+  ansible.builtin.deb822_repository:
+    name: corretto
+    uris: "https://apt.corretto.aws"
+    suites: stable
+    components:
+      - main
+    signed_by: https://apt.corretto.aws/corretto.key
+
+- name: Install JDK AWS Corretto 25
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - java-25-amazon-corretto-jdk
