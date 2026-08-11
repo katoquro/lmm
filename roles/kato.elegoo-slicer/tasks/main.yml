@@ -10,7 +10,7 @@
 
 - name: Download ElegooSlicer AppImage
   ansible.builtin.get_url:
-    url: "https://github.com/elegoo-repo/ElegooSlicer/releases/download/v{{ _version }}/ElegooSlicer_Linux_Ubuntu2404_V{{ _version }}.AppImage"
+    url: "https://github.com/elegoo-repo/ElegooSlicer/releases/download/v{{ _version }}/ElegooSlicer_Linux_V{{ _version }}.AppImage"
     dest: "{{ __install_dir.path }}/ElegooSlicer.AppImage"
     force: true
     mode: "u+x"
